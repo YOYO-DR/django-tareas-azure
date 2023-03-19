@@ -1,3 +1,3 @@
-# Fazt-Cursos
+# Prueba y guia para Django con MySQL en Azure
 
-[app](https://django-auth-crud-9v47.onrender.com)
+[app](https://tareasdjango.azurewebsites.net/)
