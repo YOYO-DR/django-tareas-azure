@@ -5,3 +5,5 @@
 - crear archivo startup.sh y ponen lo que le puse
 - crean el archivo requirements.txt con esos datos que son los principales para que funcione con mysql
 - modifican el manage.py como esta en este proyecto
+
+nota: en la app service utilizar python 3.10 porque con la 3.11 hay un error con la instalacion de mysqlclient
