@@ -6,8 +6,8 @@
     <div class="col-md-4 offset-md-4 mt-5">{% comment "" %}al poner signup, va a buscar en las url una url que se llame asi, pero lanzara un error si no lo encuentra, si la ruta a donde va a enviar los datos es la misma, simplemente no pongo el action, y el metodo del form sera POST para que se envien los datos de forma oculta{% endcomment %}
 <form action="/signup/" method="POST" class="card card-body">
   <h1 class="text-center">Registrarse</h1>
-  {% comment "" %}Mostrando su hay un error{% endcomment %}
-  {{error}}
+  {% comment "" %}Mostrando si hay un error{% endcomment %}
+  {{error}} 
   {% comment "" %}
   Llamo al formulario que le pase en el render y con as_p los meto en etiquetas p para más orden
   {% endcomment %}

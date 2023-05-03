@@ -12,4 +12,3 @@ class Task(models.Model):
 
     def __str__(self):
       return self.titulo+" - del usuario "+self.usuario.username
-    #minuto 1:19:00
