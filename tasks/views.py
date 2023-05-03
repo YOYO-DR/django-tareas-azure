@@ -10,46 +10,104 @@ from tasks.models import Task
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required #con este decorador no lo dejo entrar a mis vistas si no esta logueado, lo pongo arriba de mi vista para decirle que para entrar a esa vista debe estar logueado y lo va a redireccionar al login que debe estar acomodado en settings.py
 
-def home(request):
-  return render(request,'home.html')
+#vistas basadas en clases
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView,FormView,ListView
+from django.contrib.auth.views import LoginView, LogoutView
 
-def signup(request):
-  if request.method == 'GET':
-    #si el metodo es get, le paso el formulario
-    return render(request,'signup.html',{
-    'form': UserCreationForm
-  })
-  else:
-    #comparo las contraseñas recibidas
-    if request.POST['password1']==request.POST['password2']:
-      # registrando usuario
-      #esto crea un usuario, y tambien cifra la contraseña pero todavia no lo guarda en la base de datos
-      try:
-        user=User.objects.create_user(username=request.POST['username'],password=request.POST['password1'])
-      #asi ya lo guarda
-        user.save()
-        #despues de guardar el usuario, al login (para que guarde las credenciales o cookies en el navegador, le paso a la funcion login, el request y el usuario/objeto que cree)
-        login(request,user)
-        #lo redirecciono a la url con ese 'name'
-        return redirect('tasks')
+class HomeView(TemplateView):
+  template_name = 'home.html'
+
+  def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context["title"] = 'Bienvenido'
+      return context
+  
+# def home(request):
+#   return render(request,'home.html')
+
+class SignupView(FormView):
+  form_class=UserCreationForm
+  template_name = 'signup.html'
+  success_url = reverse_lazy('home')
+
+  def dispatch(self, request, *args, **kwargs):
+      if request.user.is_authenticated:
+        return redirect('home')
+      return super().dispatch(request, *args, **kwargs)
+  
+  def form_valid(self, form):
+    form.save()
+    username=form.cleaned_data['username']
+    password=form.cleaned_data['password']
+    user=authenticate(username=username,password=password)
+    login(self.request,user)
+    return redirect('home')
+  
+  def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context["title"] = 'Registro'
+      return context
+
+
+# def signup(request):
+#   if request.method == 'GET':
+#     #si el metodo es get, le paso el formulario
+#     return render(request,'signup.html',{
+#     'form': UserCreationForm
+#   })
+#   else:
+#     #comparo las contraseñas recibidas
+#     if request.POST['password1']==request.POST['password2']:
+#       # registrando usuario
+#       #esto crea un usuario, y tambien cifra la contraseña pero todavia no lo guarda en la base de datos
+#       try:
+#         user=User.objects.create_user(username=request.POST['username'],password=request.POST['password1'])
+#       #asi ya lo guarda
+#         user.save()
+#         #despues de guardar el usuario, al login (para que guarde las credenciales o cookies en el navegador, le paso a la funcion login, el request y el usuario/objeto que cree)
+#         login(request,user)
+#         #lo redirecciono a la url con ese 'name'
+#         return redirect('tasks')
       
-      except IntegrityError:
-        #asi más manejo errores más especificos, los de Integrity son errores con la base de datos
-        return render(request,'signup.html',{
-    'form': UserCreationForm,
-    'error':'El usuario ya existe'
-  })
-    else:
-      return render(request,'signup.html',{
-    'form': UserCreationForm,
-    'error':'La contraseña no coinciden'
-  })
+#       except IntegrityError:
+#         #asi más manejo errores más especificos, los de Integrity son errores con la base de datos
+#         return render(request,'signup.html',{
+#     'form': UserCreationForm,
+#     'error':'El usuario ya existe'
+#   })
+#     else:
+#       return render(request,'signup.html',{
+#     'form': UserCreationForm,
+#     'error':'La contraseña no coinciden'
+#   })
 
-@login_required
-def tasks(request):
-  #asi me trae las tareas que sean solo del usuario actual
-  task=Task.objects.filter(usuario=request.user,fecha_finalizacion__isnull=True)
-  return render(request,'tasks.html',{'tasks':task,'title':'Tareas pendientes'})
+class TastkListView(ListView):
+  model = Task
+  template_name = 'tasks.html'
+
+  @method_decorator(login_required)
+  def dispatch(self, request, *args, **kwargs):
+      return super().dispatch(request, *args, **kwargs)
+  
+  def get_queryset(self):
+      user = self.request.user
+      tasks=Task.objects.filter(usuario=user,fecha_finalizacion__isnull=True)
+      return tasks
+  
+  def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      context["title"] = 'Tareas pendientes'
+      return context
+  
+
+# @login_required
+# def tasks(request):
+#   #asi me trae las tareas que sean solo del usuario actual
+#   task=Task.objects.filter(usuario=request.user,fecha_finalizacion__isnull=True)
+#   return render(request,'tasks.html',{'tasks':task,'title':'Tareas pendientes'})
 
 @login_required
 def tasks_completed(request):

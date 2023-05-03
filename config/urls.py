@@ -14,21 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 from tasks import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.home,name='home'),
-    path('signup/',views.signup,name='signup'),
-    #cuando visite esa ruta, se va a cerrar sesión
-    path('logout/',views.signout,name='logout'),
-    path('signin/',views.signin,name='signin'),
-    path('tasks/',views.tasks,name='tasks'),
-    path('tasks_completed/',views.tasks_completed,name='tasks_completed'),
-    path('tasks/create/',views.create_task,name='create_tasks'),
-    #con eso le digo que la ulr va a ser dinamica,en este caso le pondre el id de la tarea, y le pongo asi para que django sepa y le pongo un nombre
-    path('tasks/<int:task_id>/',views.task_detail,name='task_detail'),
-    path('tasks/<int:task_id>/complete',views.complete_task,name='complete_task'),
-    path('tasks/<int:task_id>/delete',views.delete_task,name='delete_task'),
+    path('',include('tasks.urls'))
 ]

@@ -6,7 +6,7 @@
       <h1 class="text-center display-3 py-5">{{title}}</h1>
 
 <ul class="list-group">
-  {% for task in tasks %}
+  {% for task in object_list %}
 <a href="{% url 'task_detail' task.id %}" class="list-group-item">
   {% comment "" %}
   como esa url es dinamica, y recibe un entero, debo pasarle ese entero cuando vaya a acceder a esa urls con su name, en este caso, el id de la tarea, entonces despues de pasarle en name de la ruta, le paso el id de la tarea
