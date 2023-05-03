@@ -1,29 +1,56 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <main class="container">
   <div class="row">
     <div class="col-md-4 offset-md-4">
       <h1 class="text-secondary">{{task.titulo}}</h1>
-{{error}}
-<form action="" method="POST">
-  {% csrf_token %}
-{{form.as_p}}
+      {{form.errors}}
+      <form action="" method="POST">
+        {% csrf_token %} {{form.as_p}}
 
-<button type="submit" class="btn btn-primary">Actualizar</button>
-</form>
-<div class="mt-5 d-flex mb-5">
-  <form action="{% url 'complete_task' task.id %}" method="POST">
-  {% csrf_token %}
-  <button type="submit" class="btn btn-secondary">Completada</button>
-</form>
+        <button type="submit" class="btn btn-primary me-2">Actualizar</button>
+        <a href="{% url 'tasks' %}" class="btn btn-danger">Cancelar</a>
+      </form>
 
-<form action="{% url 'delete_task' task.id %}" method="POST">
-  {% csrf_token %}
-  <button type="submit" class="btn btn-danger ">Borrar</button>
-</form>
-</div>
+      <div class="mt-4 d-flex mb-5">
+        <button id="task_complete" class="btn btn-warning me-2 btnAccion">
+          Completada
+        </button>
+
+        <button id="borrar" class="btn btn-danger btnAccion">Borrar</button>
+      </div>
+    </div>
   </div>
-</div>
-
 </main>
-{% endblock content %}
+{% endblock content %} {% block js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const botones = document.querySelectorAll(".btnAccion");
+
+    botones.forEach(function (boton) {
+      // Agregar un evento de clic a cada botón
+      boton.addEventListener("click", function (e) {
+        e.preventDefault(); // Detener la acción por defecto del botón
+
+        let action = boton.getAttribute("id");
+        let url = "{% url 'peticiones_task' %}";
+        let datos = {
+          action: action,
+          pk: "{{object.id}}",
+        };
+
+        enviar_datos(url, datos, function (data) {
+          if (data.errors) {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: data.erros
+            });
+          }else if (data.mensaje){
+            window.location.href = data.success_url;
+          }
+        });
+      });
+    });
+  });
+</script>
+{% endblock js %}

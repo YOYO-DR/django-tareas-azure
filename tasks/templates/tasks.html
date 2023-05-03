@@ -1,33 +1,35 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <main class="container">
   <div class="row">
     <div class="col-md-6 offset-md-3">
       <h1 class="text-center display-3 py-5">{{title}}</h1>
 
-<ul class="list-group">
-  {% for task in object_list %}
-<a href="{% url 'task_detail' task.id %}" class="list-group-item">
-  {% comment "" %}
-  como esa url es dinamica, y recibe un entero, debo pasarle ese entero cuando vaya a acceder a esa urls con su name, en este caso, el id de la tarea, entonces despues de pasarle en name de la ruta, le paso el id de la tarea
-  {% endcomment %}
+      <ul class="list-group">
+        {% for task in object_list %}
+        <a href="{% url 'task_detail' task.id %}" class="list-group-item">
+          {% comment "" %} como esa url es dinamica, y recibe un entero, debo
+          pasarle ese entero cuando vaya a acceder a esa urls con su name, en
+          este caso, el id de la tarea, entonces despues de pasarle en name de
+          la ruta, le paso el id de la tarea {% endcomment %}
 
-    <header class="d-flex justify-content-between">
-      {% if task.importante %}
-  <h1 class="fw-bold text-success">{{task.titulo}}</h1>
-  {% else %}
-  <h1 class="fw-bold">{{task.titulo}}</h1>
-  {% endif %}
-  <p>{{task.usuario.username}}</p>
-    </header>
+          <header class="d-flex justify-content-between">
+            <h1 class="fw-bold 
+            {% if task.importante %}
+            text-success
+            {% endif %}">{{task.titulo|title}}</h1>
+            <p>{{task.usuario.username}}</p>
+          </header>
 
-  <p>Descripción: {{task.descripcion}}</p>
-  {% if task.fecha_finalizacion != None %}
-  <p>Fecha de finalización: {{task.fecha_finalizacion|date:'M j Y:i'}}</p>
-  {% endif %}
-</a>
-{% endfor %}</ul></div>
+          <p>Descripción: {{task.descripcion}}</p>
+          {% if task.fecha_finalizacion != None %}
+          <p>
+            Fecha de finalización: {{task.fecha_finalizacion|date:'M j Y:i'}}
+          </p>
+          {% endif %}
+        </a>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 </main>
 {% endblock content %}
-
