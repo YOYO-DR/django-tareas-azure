@@ -261,52 +261,66 @@ class TaskDetailUpdateView(UpdateView):
 #             return render(request, 'task_detail.html', {'task': task, 'form': form, 'error': 'Error actualizando la tarea'})
 
 
-@login_required
-def complete_task(request, task_id):
-    # obtengo la tarea
-    task = get_object_or_404(Task, pk=task_id, usuario=request.user)
-    # si visita la pagina (o lo mando a ella)
-    if request.method == 'POST':
-        # con el timezone.now() le pongo la fecha de hoy, es una lib de django, y luego guardo ese valor actualizado
-        task.fecha_finalizacion = timezone.now()
-        task.save()
-        return redirect('tasks_completed')
+# @login_required
+# def complete_task(request, task_id):
+#     # obtengo la tarea
+#     task = get_object_or_404(Task, pk=task_id, usuario=request.user)
+#     # si visita la pagina (o lo mando a ella)
+#     if request.method == 'POST':
+#         # con el timezone.now() le pongo la fecha de hoy, es una lib de django, y luego guardo ese valor actualizado
+#         task.fecha_finalizacion = timezone.now()
+#         task.save()
+#         return redirect('tasks_completed')
 
 
-@login_required
-def delete_task(request, task_id):
-    # obtengo la tarea
-    task = get_object_or_404(Task, pk=task_id, usuario=request.user)
-    # si visita la pagina (o lo mando a ella)
-    if request.method == 'POST':
-        # si encontro la tarea, borrala
-        task.delete()
-        return redirect('tasks')
+# @login_required
+# def delete_task(request, task_id):
+#     # obtengo la tarea
+#     task = get_object_or_404(Task, pk=task_id, usuario=request.user)
+#     # si visita la pagina (o lo mando a ella)
+#     if request.method == 'POST':
+#         # si encontro la tarea, borrala
+#         task.delete()
+#         return redirect('tasks')
 
 
-@login_required
-def signout(request):
-    logout(request)  # con esto cerro la sesión
-    return redirect('home')
+# @login_required
+# def signout(request):
+#     logout(request)  # con esto cerro la sesión
+#     return redirect('home')
 
 
-def signin(request):
-    if request.method == 'GET':
-        return render(request, 'signin.html', {
-            # Para iniciar sesion
-            'form': AuthenticationForm
-        })
-    else:
-        user = authenticate(
-            request, username=request.POST['username'], password=request.POST['password'])
-        # si no encontro nada (usuario no existe o contraseña incorrecta)
-        if user == None:
-            return render(request, 'signin.html', {
-                # Para iniciar sesion
-                'form': AuthenticationForm,
-                'error': 'Usuario o contraseña incorrectos'
-            })
-        else:
-            # antes de mandarlo a tasks porque el usuario si existe, creo la sesión
-            login(request, user)
-            return redirect('tasks')
+class SigninView(LoginView):
+    template_name = 'signin.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:  # si esta logueado lo mando a la vista principal
+            return redirect('store')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Iniciar sesión'
+        return context
+    
+
+# def signin(request):
+#     if request.method == 'GET':
+#         return render(request, 'signin.html', {
+#             # Para iniciar sesion
+#             'form': AuthenticationForm
+#         })
+#     else:
+#         user = authenticate(
+#             request, username=request.POST['username'], password=request.POST['password'])
+#         # si no encontro nada (usuario no existe o contraseña incorrecta)
+#         if user == None:
+#             return render(request, 'signin.html', {
+#                 # Para iniciar sesion
+#                 'form': AuthenticationForm,
+#                 'error': 'Usuario o contraseña incorrectos'
+#             })
+#         else:
+#             # antes de mandarlo a tasks porque el usuario si existe, creo la sesión
+#             login(request, user)
+#             return redirect('tasks')

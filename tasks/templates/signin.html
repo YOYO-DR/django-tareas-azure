@@ -5,21 +5,40 @@
   <div class="row"><section class="col-md-6 mt-6 col-sm-9 col-lg-5 col-xxl-4 m-auto">
   <form action="/signin/" method="POST" class="card card-body mt-5">
         <h1 class="text-center">Iniciar sesión</h1>
-        {{error}}
         {% csrf_token %}
         <div class="mb-3">
           <label for="username">Nombre de usuario: </label>
-            <input type="text" name="username" id="username" class="form-control" placeholder="Escribe tu nombre de usuario">
+            <input required type="text" name="username" id="username" class="form-control" placeholder="Escribe tu nombre de usuario">
         </div>
 
         <div class="mb-3">
           <label for="password">Contraseña: </label>
-            <input type="password" name="password" id="password" class="form-control" placeholder="Escribe tu contraseña">
+            <input required type="password" name="password" id="password" class="form-control" placeholder="Escribe tu contraseña">
         </div>
-        <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+        <button id="btnLogin" type="submit" class="btn btn-primary">Iniciar sesión</button>
       </form>
 </section></div>
 </main>
-      
-
 {% endblock content %}
+{% block js %}
+<script>
+{% if form.errors %}
+errors='<ul style="list-style-type:none;padding:0;">'
+{% for field in form %}
+{% for error in field.errors %}
+errors+='<li>{{error}}</li>'
+{% endfor %}
+{% endfor %}
+{% for error in form.non_field_errors %}
+errors+='<li>{{error}}</li>'
+{% endfor %}
+
+errors+='</ul>'
+Swal.fire({
+  icon: 'error',
+  title: 'Oops...',
+  html: errors
+})
+{% endif %}
+</script>
+{% endblock js %}

@@ -15,7 +15,15 @@ function enviar_datos(url, datos, callback) {
   })
     .then((response) => response.json())
     .then((data) => {
-      callback(data);
+      if (!data.errors) {
+        callback(data);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: data.erros,
+        });
+      }
     })
     .catch((error) => {
       //****************** que hubo un error

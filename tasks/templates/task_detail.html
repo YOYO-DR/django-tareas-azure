@@ -1,14 +1,18 @@
 {% extends 'base.html' %} {% block content %}
 <main class="container">
   <div class="row">
-    <div class="col-md-4 offset-md-4">
+    <div class="col-sm-9 col-md-6 col-lg-5 col-xxl-4 m-auto">
       <h1 class="text-secondary">{{task.titulo}}</h1>
       {{form.errors}}
       <form action="" method="POST">
         {% csrf_token %} {{form.as_p}}
 
-        <button type="submit" class="btn btn-primary me-2">Actualizar</button>
-        <a href="{% url 'tasks' %}" class="btn btn-danger">Cancelar</a>
+        <button id="actu" type="submit" class="btn btn-primary me-2">
+          Actualizar
+        </button>
+        <button href="{% url 'tasks' %}" class="btn btn-danger">
+          Cancelar
+        </button>
       </form>
 
       <div class="mt-4 d-flex mb-5">
@@ -25,11 +29,33 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const botones = document.querySelectorAll(".btnAccion");
+    const actu = document.getElementById("actu");
+    //span con el spinner de cargando
+    const etiqueta = document.createElement('span'); // la cual sera el spinner
+    etiqueta.classList.add('spinner-border','spinner-border-sm','me-1'); // agregamos la clase del spinner a la etiqueta
+    
+    //clic en boton de actualizar
+    actu.addEventListener("click", function (e) {
+      actu.setAttribute('disabled','') //lo desactivo
+      actu.insertAdjacentHTML('afterbegin', etiqueta.outerHTML); //pongo la span en el boton
+      botones.forEach(function (btn){
+          btn.setAttribute('disabled','') //los desactivo
+        })
+        document.querySelector("form").submit(); //envio el formulario
+      })
 
     botones.forEach(function (boton) {
       // Agregar un evento de clic a cada botón
       boton.addEventListener("click", function (e) {
         e.preventDefault(); // Detener la acción por defecto del botón
+
+        // cargando
+        boton.insertAdjacentHTML('afterbegin', etiqueta.outerHTML); //pongo la span en el boton
+        //desactivo todos los botones
+        botones.forEach(function(boton){
+          boton.setAttribute('disabled','') //los desactivo
+        })
+        actu.setAttribute('disabled','')
 
         let action = boton.getAttribute("id");
         let url = "{% url 'peticiones_task' %}";
@@ -37,17 +63,8 @@
           action: action,
           pk: "{{object.id}}",
         };
-
         enviar_datos(url, datos, function (data) {
-          if (data.errors) {
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: data.erros
-            });
-          }else if (data.mensaje){
-            window.location.href = data.success_url;
-          }
+          window.location.href = data.success_url;
         });
       });
     });
