@@ -34,8 +34,12 @@ class TaskViewView(View):
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
-        url = data['url'].split('/')
-        url = '/' + '/'.join(url[3:])
+        url = data.get('url')
+        if url:
+            url = url.split('/')
+            url = '/' + '/'.join(url[3:])
+        else:
+            url = '/'
         mensaje = {}
         action = data.get('action')
         pk = data.get('pk')
