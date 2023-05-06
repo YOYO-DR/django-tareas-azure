@@ -6,7 +6,7 @@
       {{form.errors}}
       <form action="" method="POST">
         {% csrf_token %} {{form.as_p}}
-
+        <input type="hidden" name="url" value="">
         <button id="actu" type="submit" class="btn btn-primary me-2">
           Actualizar
         </button>
@@ -16,10 +16,11 @@
       </form>
 
       <div class="mt-4 d-flex mb-5">
+        {% if not object.fecha_finalizacion %}
         <button id="task_complete" class="btn btn-warning me-2 btnAccion">
           Completada
         </button>
-
+        {% endif %}
         <button id="borrar" class="btn btn-danger btnAccion">Borrar</button>
       </div>
     </div>
@@ -27,22 +28,25 @@
 </main>
 {% endblock content %} {% block js %}
 <script>
+  //input de url en actualizar
+  let inputOculto = document.querySelector('input[name="url"]');
+  inputOculto.value=document.referrer;
   document.addEventListener("DOMContentLoaded", function () {
     const botones = document.querySelectorAll(".btnAccion");
     const actu = document.getElementById("actu");
     //span con el spinner de cargando
-    const etiqueta = document.createElement('span'); // la cual sera el spinner
-    etiqueta.classList.add('spinner-border','spinner-border-sm','me-1'); // agregamos la clase del spinner a la etiqueta
-    
+    const etiqueta = document.createElement("span"); // la cual sera el spinner
+    etiqueta.classList.add("spinner-border", "spinner-border-sm", "me-1"); // agregamos la clase del spinner a la etiqueta
+
     //clic en boton de actualizar
     actu.addEventListener("click", function (e) {
-      actu.setAttribute('disabled','') //lo desactivo
-      actu.insertAdjacentHTML('afterbegin', etiqueta.outerHTML); //pongo la span en el boton
-      botones.forEach(function (btn){
-          btn.setAttribute('disabled','') //los desactivo
-        })
-        document.querySelector("form").submit(); //envio el formulario
-      })
+      actu.setAttribute("disabled", ""); //lo desactivo
+      actu.insertAdjacentHTML("afterbegin", etiqueta.outerHTML); //pongo la span en el boton
+      botones.forEach(function (btn) {
+        btn.setAttribute("disabled", ""); //los desactivo
+      });
+      document.querySelector("form").submit(); //envio el formulario
+    });
 
     botones.forEach(function (boton) {
       // Agregar un evento de clic a cada botón
@@ -50,12 +54,12 @@
         e.preventDefault(); // Detener la acción por defecto del botón
 
         // cargando
-        boton.insertAdjacentHTML('afterbegin', etiqueta.outerHTML); //pongo la span en el boton
+        boton.insertAdjacentHTML("afterbegin", etiqueta.outerHTML); //pongo la span en el boton
         //desactivo todos los botones
-        botones.forEach(function(boton){
-          boton.setAttribute('disabled','') //los desactivo
-        })
-        actu.setAttribute('disabled','')
+        botones.forEach(function (boton) {
+          boton.setAttribute("disabled", ""); //los desactivo
+        });
+        actu.setAttribute("disabled", "");
 
         let action = boton.getAttribute("id");
         let url = "{% url 'peticiones_task' %}";
@@ -64,7 +68,23 @@
           pk: "{{object.id}}",
         };
         enviar_datos(url, datos, function (data) {
-          window.location.href = data.success_url;
+          paginaAnterior = document.referrer;
+          if (action == "task_complete") {
+            //si xompleta la tarea, lo mando a tasks_completed con la direccion que poasa el post y con el return finalizo la ejecución
+            window.location.href = data.success_url;
+            return false;
+          }
+          if (action == "borrar") {
+            if (
+              paginaAnterior.includes("/tasks_completed/") ||
+              paginaAnterior.includes("/tasks/")
+            ) {
+              window.location.href = paginaAnterior;
+            } else {
+              window.location.href = data.success_url;
+            }
+            //Lo mando según a la pagina la cual vino, sea la de pendientes o completadas, y si no viene de esas, lo mando a la success_url la cual es la que pasa el
+          }
         });
       });
     });

@@ -2,8 +2,10 @@
 <main class="container">
   <div class="row">
     <div class="col-md-6 offset-md-3">
-      <h1 class="text-center display-3 py-5">{{title}}</h1>
-
+      {% if not object_list %}
+      <h1 class="text-center display-3 py-5">No hay tareas {{title}}</h1>
+      {% else %}
+      <h1 class="text-center display-3 py-5">Tareas {{title}}</h1>
       <ul class="list-group">
         {% for task in object_list %}
         <a href="{% url 'task_detail' task.id %}" class="list-group-item">
@@ -29,6 +31,7 @@
         </a>
         {% endfor %}
       </ul>
+      {% endif %}
     </div>
   </div>
 </main>

@@ -136,7 +136,7 @@ class TastkListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = 'Tareas pendientes'
+        context["title"] = 'pendientes'
         return context
 
 # @login_required
@@ -162,7 +162,7 @@ class TasksComplete(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = 'Tareas completas'
+        context["title"] = 'completas'
         return context
 
 
@@ -231,6 +231,12 @@ class TaskDetailUpdateView(UpdateView):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
+    def post(self, request, *args, **kwargs):
+        url = request.POST.get('url').split('/')
+        url = '/' + '/'.join(url[3:])
+        self.success_url = url
+        return super().post(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # la tarea u objeto se obtiene de la funcion get_context_data y se guarda como object
@@ -297,12 +303,12 @@ class SigninView(LoginView):
         if request.user.is_authenticated:  # si esta logueado lo mando a la vista principal
             return redirect('store')
         return super().dispatch(request, *args, **kwargs)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = 'Iniciar sesión'
         return context
-    
+
 
 # def signin(request):
 #     if request.method == 'GET':
