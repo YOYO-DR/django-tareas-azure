@@ -6,7 +6,7 @@
       <h1 class="text-center display-3 py-5">No hay tareas {{title}}</h1>
       {% else %}
       <h1 class="text-center display-3 py-5">Tareas {{title}}</h1>
-      <ul class="list-group">
+      <ul class="list-group mb-5">
         {% for task in object_list %}
         <a href="{% url 'task_detail' task.id %}" class="list-group-item">
           {% comment "" %} como esa url es dinamica, y recibe un entero, debo

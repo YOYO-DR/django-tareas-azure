@@ -66,25 +66,10 @@
         let datos = {
           action: action,
           pk: "{{object.id}}",
+          url:document.referrer
         };
         enviar_datos(url, datos, function (data) {
-          paginaAnterior = document.referrer;
-          if (action == "task_complete") {
-            //si xompleta la tarea, lo mando a tasks_completed con la direccion que poasa el post y con el return finalizo la ejecución
-            window.location.href = data.success_url;
-            return false;
-          }
-          if (action == "borrar") {
-            if (
-              paginaAnterior.includes("/tasks_completed/") ||
-              paginaAnterior.includes("/tasks/")
-            ) {
-              window.location.href = paginaAnterior;
-            } else {
               window.location.href = data.success_url;
-            }
-            //Lo mando según a la pagina la cual vino, sea la de pendientes o completadas, y si no viene de esas, lo mando a la success_url la cual es la que pasa el
-          }
         });
       });
     });

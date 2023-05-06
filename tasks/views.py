@@ -34,6 +34,8 @@ class TaskViewView(View):
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
+        url = data['url'].split('/')
+        url = '/' + '/'.join(url[3:])
         mensaje = {}
         action = data.get('action')
         pk = data.get('pk')
@@ -47,7 +49,7 @@ class TaskViewView(View):
             mensaje['mensaje'] = 'tarea completada'
         elif action == 'borrar':
             tarea.delete()
-            mensaje['success_url'] = reverse_lazy('tasks')
+            mensaje['success_url'] = url
             mensaje['mensaje'] = 'tarea eliminada'
         return JsonResponse(mensaje)
 
