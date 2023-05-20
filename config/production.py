@@ -5,6 +5,8 @@ from .settings import BASE_DIR # importamos la ruta de inicio
 
 # se agrega los host por medio de las variables de entono que me da Azure
 ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']] if 'WEBSITE_HOSTNAME' in os.environ else []
+
+# En resumen, esta configuración asegura que solo los orígenes especificados en la lista CSRF_TRUSTED_ORIGINS sean considerados como seguros para realizar solicitudes POST, PUT, DELETE, etc. y protege la aplicación Django de los ataques CSRF.
 #se pone las rutas de seguridad
 CSRF_TRUSTED_ORIGINS = ['https://' + os.environ['WEBSITE_HOSTNAME']] if 'WEBSITE_HOSTNAME' in os.environ else []
 #ponemos el DEBUG en false porque se va a ejecutar en produccion

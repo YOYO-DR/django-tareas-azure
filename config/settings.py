@@ -28,9 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# En resumen, esta configuración asegura que solo los orígenes especificados en la lista CSRF_TRUSTED_ORIGINS sean considerados como seguros para realizar solicitudes POST, PUT, DELETE, etc. y protege la aplicación Django de los ataques CSRF.
-if 'CODESPACE_NAME' in os.environ:
-    CSRF_TRUSTED_ORIGINS = [f'https://{os.getenv("CODESPACE_NAME")}-8000.{os.getenv("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN")}']
+
+
 
 # Application definition
 
