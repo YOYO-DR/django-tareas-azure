@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 def main():
     """Run administrative tasks."""
-    #si no existe la variable de entorno, se ejecuta load_dotenv para acceder a los valores de .env con el os.getenv
+    #si no existe la variable de entorno, se ejecuta load_dotenv para acceder a los valores de .env con el os.environ.get('VARIABLE')
     if 'WEBSITE_HOSTNAME' not in os.environ:
         print("Loading environment variables for .env file")
         load_dotenv('./.env')
