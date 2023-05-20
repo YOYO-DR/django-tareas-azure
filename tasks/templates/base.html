@@ -10,7 +10,7 @@
   <link rel="icon" href="{% static 'media/img/django.ico' %}">
   <!--Para las peticiones POST-->
   {% csrf_token %}
-  <title>{{title}}</title>
+  <title>{{title|title}}</title>
 </head>
 <body>
 
