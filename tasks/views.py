@@ -83,7 +83,7 @@ class SignupView(FormView):
     def form_valid(self, form):
         form.save()
         username = form.cleaned_data['username']
-        password = form.cleaned_data['password']
+        password = form.cleaned_data['password1']
         user = authenticate(username=username, password=password)
         login(self.request, user)
         return redirect('home')
