@@ -10,9 +10,17 @@
         <button id="actu" type="submit" class="btn btn-primary me-2">
           Actualizar
         </button>
-        <button href="{% url 'tasks' %}" class="btn btn-danger">
+        
+        <a href="
+        {% if not object.fecha_finalizacion %}
+        {% url 'tasks' %}
+        {% else %}
+        {% url 'tasks_completed' %}
+        {% endif %}
+        " class="btn btn-danger">
           Cancelar
-        </button>
+        </a>
+        
       </form>
 
       <div class="mt-4 d-flex mb-5">
